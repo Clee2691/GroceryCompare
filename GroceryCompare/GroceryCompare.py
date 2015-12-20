@@ -24,16 +24,18 @@ def findGroceryDetails(grocery_store):
 if __name__ == '__main__':
 
     acmeSource = parsePage()
-    acme_findGroceryDetails(acmeSource)
+    acme_price, acme_names, acme_images = findGroceryDetails(acmeSource)
 
-    for prices in all_p_prices:
+
+    # for debugging purposes
+    for prices in acme_price:
         prices = prices.encode('UTF-8')
         print (prices)
 
-    for titles in all_p_titles:
+    for titles in acme_names:
         titles = titles.encode('UTF-8')
         print (titles)
 
-    for images in all_p_images:
+    for images in acme_images:
         images = images.encode('UTF-8')
         print(images)
