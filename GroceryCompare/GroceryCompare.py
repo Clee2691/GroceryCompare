@@ -21,21 +21,23 @@ def findGroceryDetails(grocery_store):
 
     return all_p_prices, all_p_titles, all_p_images
 
+def createGroceryItem():
+    acme_price, acme_names, acme_images = findGroceryDetails(acmeSource)
+
+    for p, n, i in zip(acme_price, acme_names, acme_images):
+        print ('Item: '.encode() + n.get_text().encode(), 'Price: '.encode() + p.get_text().encode(), 'Image: '.encode() + i.get_text().encode())
+
 if __name__ == '__main__':
 
     acmeSource = parsePage()
-    acme_price, acme_names, acme_images = findGroceryDetails(acmeSource)
-
+    acmeGroceries = createGroceryItem()
 
     # for debugging purposes
-    for prices in acme_price:
-        prices = prices.encode('UTF-8')
-        print (prices)
+    '''for prices in acme_price:
+        print(prices.encode('UTF-8'))
 
     for titles in acme_names:
-        titles = titles.encode('UTF-8')
-        print (titles)
+        print(titles.encode('UTF-8'))
 
     for images in acme_images:
-        images = images.encode('UTF-8')
-        print(images)
+        print(images.encode('UTF-8'))'''
