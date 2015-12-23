@@ -51,7 +51,7 @@ def display_items_found(found_list):
         print('Item name: '.encode() + item.item_name, 'Price: '.encode() + item.item_price)
 
 if __name__ == '__main__':
-
+    #Make this loop over all pages of the ad. Try using a dictionary
     acme_source = parsePage('http://acmemarkets.mywebgrocer.com/Circular/Philadelphia-19th-and-Oregon/744373054/Weekly/3/1')
     shoprite_source = parsePage('http://plan.shoprite.com/Circular/ShopRite-of-Oregon-Ave/977B652/Weekly/2/1')
     acme_groceries = createGroceryItem(acme_source)
