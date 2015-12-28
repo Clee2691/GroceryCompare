@@ -1,5 +1,17 @@
 ﻿from bs4 import BeautifulSoup, UnicodeDammit
 import requests
+import sys
+
+from PyQt5 import QtGui, QtCore, QtWidgets
+from designLayout import Ui_MainWindow
+
+class GroceryLayout(QtWidgets.QMainWindow, Ui_MainWindow):
+    
+    '''GUI of the program'''
+
+    def __init__(self):
+        super(GroceryLayout, self).__init__()
+        self.setupUi(self)
 
 class GroceryItem():
     
@@ -9,15 +21,50 @@ class GroceryItem():
         self.item_price = item_price
         self.item_image = item_image
 
-def parsePage(web_page):
+def parsePages(web_page):
 
-    #Parses webpage of requested ad page
-    page = requests.get(web_page)
-    return BeautifulSoup(page.content, 'html.parser')
+    ''' Takes generic page and makes a working link of the ad for further processing''' 
+
+    store_link_source = requests.get(web_page)
+    store_link_Souped = BeautifulSoup(store_link_source.content, 'html.parser')
+
+    week_ad_link = store_link_Souped.select('.megadrop-circular-name')
+    week_ad_link = week_ad_link[0].get('href')
+
+    full_link = web_page + str(week_ad_link)
+    print(full_link)
+
+    page = requests.get(full_link)
+    shop_dic = makeGroceryDictionary(BeautifulSoup(page.content, 'html.parser'), full_link)
+
+    return shop_dic
+
+def makeGroceryDictionary(store_page_source, actual_page):
+    ''' Return a dictionary of all the pages of the ad '''
+
+    grocery_page_dic = {}
+
+    all_pages_tag = store_page_source.select('.pages')
+
+
+    num_pages = int((len(all_pages_tag) + 2) / 2)
+
+    x = 1
+
+    for i in range(1, num_pages + 1):
+        page_iter = requests.get(actual_page + '/' + str(i))
+
+        grocery_page_dic['page'+ str(x)] = BeautifulSoup(page_iter.content, 'html.parser')
+
+        x += 1
+
+    return grocery_page_dic
+    
 
 def findGroceryDetails(grocery_store):
 
-    #selects the css selector and puts them in a list
+    '''selects the css selector for the item details and puts them in a list'''
+
     prices = grocery_store.select('.itemPrice')
     titles = grocery_store.select('.itemTitle')
     images = grocery_store.select('.itemImage')
@@ -37,6 +84,7 @@ def createGroceryItem(page_source):
     return item_list
 
 def searchItem(item_list):
+    #Searches for the item that you specify
     search_item = input('What is the name of the item to search for?: ')
     item_found_list = []
 
@@ -51,11 +99,23 @@ def display_items_found(found_list):
         print('Item name: '.encode() + item.item_name, 'Price: '.encode() + item.item_price)
 
 if __name__ == '__main__':
+
     #Make this loop over all pages of the ad. Try using a dictionary
-    acme_source = parsePage('http://acmemarkets.mywebgrocer.com/Circular/Philadelphia-19th-and-Oregon/744373054/Weekly/3/1')
-    shoprite_source = parsePage('http://plan.shoprite.com/Circular/ShopRite-of-Oregon-Ave/977B652/Weekly/2/1')
+    acme_source = parsePages('http://acmemarkets.mywebgrocer.com')
+    shoprite_source = parsePages('http://plan.shoprite.com')
+
+
     acme_groceries = createGroceryItem(acme_source)
     shoprite_groceries = createGroceryItem(shoprite_source)
+
+    #Ensures it works in virtualEnv by setting paths
+    QtCore.QCoreApplication.setLibraryPaths(['E:\Visual Studio 2015\Projects\GroceryCompare\GroceryCompare\env34\Lib\site-packages\PyQt5\plugins'])
+
+    #Create the main window
+    app = QtWidgets.QApplication(sys.argv)
+    window = GroceryLayout()
+    window.show()
+    app.exec_()
 
     while True:
         search_for_groceries = input('Do you want to search for specific items? (Y/N/Exit): ')

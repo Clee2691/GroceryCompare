@@ -24,6 +24,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="designLayout.py" />
     <Compile Include="GroceryCompare.py" />
   </ItemGroup>
   <ItemGroup>
