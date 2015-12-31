@@ -2,17 +2,6 @@
 import requests
 import sys
 
-from PyQt5 import QtGui, QtCore, QtWidgets
-from designLayout import Ui_MainWindow
-
-class GroceryLayout(QtWidgets.QMainWindow, Ui_MainWindow):
-    
-    '''GUI of the program'''
-
-    def __init__(self):
-        super(GroceryLayout, self).__init__()
-        self.setupUi(self)
-
 class GroceryItem():
     
     '''Creates the item instances found on each page'''
@@ -22,7 +11,7 @@ class GroceryItem():
         self.item_image = item_image
 
 def parsePages(web_page):
-
+   
     ''' Takes generic page and makes a working link of the ad for further processing''' 
 
     #Generic store link souped
@@ -87,40 +76,33 @@ def createGroceryItem(page_dic):
 
     return item_list
 
-def searchItem(item_list):
-    #Searches for the item that you specify
-    search_item = input('What is the name of the item to search for?: ')
+def searchItem(item_list, search_term):
     item_found_list = []
+    
+    if search_term =='':
+        return item_found_list
+
+    #Searches for the item that you specify
+
 
     for item in item_list:
-        if item.item_name.find(search_item.encode()) > -1:
+        if item.item_name.find(search_term.encode()) > -1:
             item_found_list.append(item)
 
     return item_found_list
 
-def display_items_found(found_list):
-    for item in found_list:
-        print('Item name: '.encode() + item.item_name, 'Price: '.encode() + item.item_price)
-
-if __name__ == '__main__':
+def grabGroceries():
 
     #Parses each of the pages of the ad for each store. Returns a dictionary of the pages
     acme_dic = parsePages('http://acmemarkets.mywebgrocer.com')
     #shoprite_dic = parsePages('http://plan.shoprite.com')
 
-
     acme_groceries = createGroceryItem(acme_dic)
     #shoprite_groceries = createGroceryItem(shoprite_dic)
 
-    #Ensures it works in virtualEnv by setting paths
-    QtCore.QCoreApplication.setLibraryPaths(['E:\Visual Studio 2015\Projects\GroceryCompare\GroceryCompare\env34\Lib\site-packages\PyQt5\plugins'])
+    return acme_groceries
 
-    #Create the main window
-    app = QtWidgets.QApplication(sys.argv)
-    window = GroceryLayout()
-    window.show()
-    app.exec_()
-
+    '''
     while True:
         search_for_groceries = input('Do you want to search for specific items? (Y/N/Exit): ')
      
@@ -148,4 +130,4 @@ if __name__ == '__main__':
             break
 
         else:
-            print('Please put Y or N')
+            print('Please put Y or N')'''

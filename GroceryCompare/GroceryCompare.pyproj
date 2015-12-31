@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>5f4db373-9b23-42f2-892f-53b864adf6ce</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>GroceryCompare.py</StartupFile>
+    <StartupFile>appGUI.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -24,6 +24,9 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="appGUI.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="designLayout.py" />
     <Compile Include="GroceryCompare.py" />
   </ItemGroup>
