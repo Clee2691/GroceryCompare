@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\acmeimage.png" />
+    <Content Include="Images\grocery_icon.png" />
     <Content Include="Images\shopriteimage.png" />
   </ItemGroup>
   <PropertyGroup>

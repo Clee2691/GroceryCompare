@@ -25,14 +25,27 @@ class GroceryLayout(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.store_picker.activated.connect(partial(self.displayItems, acme_list, shoprite_list, acme_date, shop_date))
         self.search_button.clicked.connect(partial(self.searchItem,acme_list, shoprite_list))
+        self.reset_btn.clicked.connect(self.resetTable)
 
-    def displayItems(self, acme_list, shoprite_list, acme_date, shop_date):
-
+    def resetTable(self):
+        '''Resets the table'''
         self.grocery_table.setRowCount(0)
         self.grocery_table.clearContents()
 
+    def displayItems(self, acme_list, shoprite_list, acme_date, shop_date):
+        '''Displays items from the grocery store depending on which store is picked'''
+        #Make QPixmap object of the image
+        acme_icon = QtGui.QPixmap(r"Images\acmeimage.png")
+        shoprite_icon = QtGui.QPixmap(r'Images\shopriteimage.png')
+
+        #Clear the table if there is anything
+        self.grocery_table.setRowCount(0)
+        self.grocery_table.clearContents()
+
+        #Depending on the store, display the items, icon, and effective ad date
         if self.store_picker.currentText() == 'Acme':
             self.store_week_label.setText(acme_date)
+            self.store_icon_label.setPixmap(acme_icon)
 
             self.grocery_table.setRowCount(len(acme_list))
             x = 0
@@ -43,6 +56,8 @@ class GroceryLayout(QtWidgets.QMainWindow, Ui_MainWindow):
 
         elif self.store_picker.currentText() == 'ShopRite':
             self.store_week_label.setText(shop_date)
+            self.store_icon_label.setPixmap(shoprite_icon)
+
             self.grocery_table.setRowCount(len(shoprite_list))
             x = 0
             for item in shoprite_list:
@@ -53,7 +68,7 @@ class GroceryLayout(QtWidgets.QMainWindow, Ui_MainWindow):
                 x += 1
 
     def searchItem(self, acme_list, shoprite_list):
-
+        '''Search for a specific item depending on the store'''
         search_term = self.search_input.text()
 
         if self.store_picker.currentText() == 'Acme':
@@ -63,17 +78,15 @@ class GroceryLayout(QtWidgets.QMainWindow, Ui_MainWindow):
 
         if len(found_items) > 0:
             for item in found_items:
-                item = item.item_name
-                print(item)
-                #print('Item name: ' + item.item_name, 'Price: ' + item.item_price)
+                print('Item name: ' + item.item_name, 'Price: ' + item.item_price)
         else:
             print("Either you didn't enter anything or no items found in this week's circular")
 
 if __name__ == '__main__':
     
     #Ensures it works in virtualEnv by setting paths
-    QtCore.QCoreApplication.setLibraryPaths(['E:\Visual Studio 2015\Projects\GroceryCompare\GroceryCompare\env34\Lib\site-packages\PyQt5\plugins'])
-
+    QtCore.QCoreApplication.setLibraryPaths(['env34\Lib\site-packages\PyQt5\plugins'])
+    #E:\Visual Studio 2015\Projects\GroceryCompare\GroceryCompare\
     #Create the main window
     app = QtWidgets.QApplication(sys.argv)
     window = GroceryLayout()
