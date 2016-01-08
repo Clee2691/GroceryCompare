@@ -1,4 +1,4 @@
-﻿from bs4 import BeautifulSoup, UnicodeDammit
+﻿from bs4 import BeautifulSoup
 import requests
 import sys
 
@@ -16,10 +16,10 @@ def parsePages(web_page):
 
     #Generic store link souped
     store_link_source = requests.get(web_page)
-    store_link_Souped = BeautifulSoup(store_link_source.content, 'html.parser')
+    store_link_souped = BeautifulSoup(store_link_source.content, 'html.parser')
 
     #Find the actual link to the circular
-    week_ad_link = store_link_Souped.select('.megadrop-circular-name')
+    week_ad_link = store_link_souped.select('.megadrop-circular-name')
     week_ad_link = week_ad_link[0].get('href')
 
     #Create the full link without pages
@@ -27,9 +27,9 @@ def parsePages(web_page):
 
     #Send link to make the dictionary of grocery pages
     page = requests.get(full_link)
-    shop_dic = makeGroceryDictionary(BeautifulSoup(page.content, 'html.parser'), full_link)
+    shop_dic, val_dates = makeGroceryDictionary(BeautifulSoup(page.content, 'html.parser'), full_link)
 
-    return shop_dic
+    return shop_dic, val_dates
 
 def makeGroceryDictionary(store_page_source, actual_page):
     ''' Return a dictionary of all the pages of the ad '''
@@ -41,6 +41,9 @@ def makeGroceryDictionary(store_page_source, actual_page):
   
     num_pages = int((len(all_pages_tag) + 2) / 2) # Use "2" to correct for double "pages" effectively making the total pages twice as many
 
+    #Obtain the valid dates for this week's ad
+    valid_dates = store_page_source.select('#CircularValidDates')
+
     #Parses each ad page and makes them into BS objects
     x = 1
 
@@ -51,7 +54,7 @@ def makeGroceryDictionary(store_page_source, actual_page):
 
         x += 1
 
-    return grocery_page_dic
+    return grocery_page_dic, valid_dates[0].get_text()
     
 def findGroceryDetails(grocery_store):
 
@@ -72,21 +75,19 @@ def createGroceryItem(page_dic):
 
         # Create instances of the grocery item using GroceryItem class
         for p, n, i in zip(price, names, images):
-            item_list.append(GroceryItem(n.get_text().encode(),p.get_text().encode(),i.get('src').encode()))
+            item_list.append(GroceryItem(n.get_text(),p.get_text(),i.get('src')))
 
     return item_list
 
 def searchItem(item_list, search_term):
     item_found_list = []
     
-    if search_term =='':
+    if search_term == '':
         return item_found_list
 
     #Searches for the item that you specify
-
-
     for item in item_list:
-        if item.item_name.find(search_term.encode()) > -1:
+        if search_term in item.item_name:
             item_found_list.append(item)
 
     return item_found_list
@@ -94,40 +95,10 @@ def searchItem(item_list, search_term):
 def grabGroceries():
 
     #Parses each of the pages of the ad for each store. Returns a dictionary of the pages
-    acme_dic = parsePages('http://acmemarkets.mywebgrocer.com')
-    #shoprite_dic = parsePages('http://plan.shoprite.com')
+    acme_dic, acme_val_date = parsePages('http://acmemarkets.mywebgrocer.com')
+    shoprite_dic, shop_val_date = parsePages('http://plan.shoprite.com')
 
     acme_groceries = createGroceryItem(acme_dic)
-    #shoprite_groceries = createGroceryItem(shoprite_dic)
+    shoprite_groceries = createGroceryItem(shoprite_dic)
 
-    return acme_groceries
-
-    '''
-    while True:
-        search_for_groceries = input('Do you want to search for specific items? (Y/N/Exit): ')
-     
-        # Affirmative to search for items
-        if search_for_groceries == 'Y' or search_for_groceries == 'y':
-            found_item_list = searchItem(acme_groceries)
-
-            #Only print the items if things have been found
-            if len(found_item_list) > 0:
-                display_items_found(found_item_list)
-            else:
-                print('Sorry no items found this week. Try a different item.')
-        
-        #Print all items on the page
-        elif search_for_groceries == 'N' or search_for_groceries == 'n':
-            print('\nHere are this weeks groceries: \n' + 'ACME Store:\n')
-            for item in acme_groceries:
-                print('Item name: '.encode() + item.item_name, 'Price: '.encode() + item.item_price)
-            
-            print('\nHere are this weeks groceries: \n' + 'ShopRite Store\n')
-            for item in shoprite_groceries:
-                print('Item name: '.encode() + item.item_name, 'Price: '.encode() + item.item_price)
-        #Exit the app
-        elif search_for_groceries == 'exit' or search_for_groceries == 'Exit':
-            break
-
-        else:
-            print('Please put Y or N')'''
+    return acme_groceries, shoprite_groceries, acme_val_date, shop_val_date
