@@ -6,6 +6,7 @@ from PyQt5 import QtGui, QtCore, QtWidgets
 from designLayout import Ui_MainWindow
 import GroceryCompare
 from functools import partial
+import chardet
 
 class GroceryLayout(QtWidgets.QMainWindow, Ui_MainWindow):
     
@@ -77,16 +78,28 @@ class GroceryLayout(QtWidgets.QMainWindow, Ui_MainWindow):
             found_items = GroceryCompare.searchItem(shoprite_list, search_term)
 
         if len(found_items) > 0:
+            #Clear the table if there is anything
+            self.grocery_table.setRowCount(0)
+            self.grocery_table.clearContents()
+
+            self.grocery_table.setRowCount(len(found_items))
+            x = 0
+
             for item in found_items:
-                print('Item name: ' + item.item_name, 'Price: ' + item.item_price)
+
+                self.grocery_table.setItem(x, 0, QtWidgets.QTableWidgetItem(item.item_name))
+                self.grocery_table.setItem(x, 1, QtWidgets.QTableWidgetItem(item.item_price))
+                x += 1
+
         else:
-            print("Either you didn't enter anything or no items found in this week's circular")
+            QtWidgets.QMessageBox.warning(self,'Search Error' , "Either you didn't enter anything in or the item is not on sale this week.", QtWidgets.QMessageBox.Ok)
 
 if __name__ == '__main__':
     
     #Ensures it works in virtualEnv by setting paths
     QtCore.QCoreApplication.setLibraryPaths(['env34\Lib\site-packages\PyQt5\plugins'])
     #E:\Visual Studio 2015\Projects\GroceryCompare\GroceryCompare\
+
     #Create the main window
     app = QtWidgets.QApplication(sys.argv)
     window = GroceryLayout()
