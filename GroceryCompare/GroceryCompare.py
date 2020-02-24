@@ -39,7 +39,7 @@ def makeGroceryDictionary(store_page_source, actual_page):
     #Determine how many pages are in this weeks ads
     all_pages_tag = store_page_source.select('.pages')
   
-    num_pages = int((len(all_pages_tag) + 2) / 2) # Use "2" to correct for double "pages" effectively making the total pages twice as many
+    num_pages = int((len(all_pages_tag) + 2) / 2) # Use divided by "2" to correct for double "pages" effectively making the total pages twice as many
 
     #Obtain the valid dates for this week's ad
     valid_dates = store_page_source.select('#CircularValidDates')
@@ -87,7 +87,7 @@ def searchItem(item_list, search_term):
 
     #Searches for the item that you specify
     for item in item_list:
-        if search_term in item.item_name:
+        if search_term.lower() in item.item_name.lower():
             item_found_list.append(item)
 
     return item_found_list

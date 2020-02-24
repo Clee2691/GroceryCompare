@@ -8,6 +8,17 @@ import GroceryCompare
 from functools import partial
 import chardet
 
+class grabGroceryThread(QtCore.QThread):
+
+    def __init__():
+        QtCore.QThread.__init__(self)
+
+    def __del__(self):
+        self.wait()
+        
+    def run(self):
+        return
+
 class GroceryLayout(QtWidgets.QMainWindow, Ui_MainWindow):
     
     '''GUI of the program'''
@@ -83,6 +94,7 @@ class GroceryLayout(QtWidgets.QMainWindow, Ui_MainWindow):
             self.grocery_table.clearContents()
 
             self.grocery_table.setRowCount(len(found_items))
+
             x = 0
 
             for item in found_items:
