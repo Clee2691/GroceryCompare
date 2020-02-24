@@ -213,4 +213,5 @@ ModelManifest.xml
 
 __pycache__
 
-env34/
+venv/
+GroceryCompare/.vscode/settings.json

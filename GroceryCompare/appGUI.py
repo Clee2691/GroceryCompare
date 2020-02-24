@@ -109,8 +109,7 @@ class GroceryLayout(QtWidgets.QMainWindow, Ui_MainWindow):
 if __name__ == '__main__':
     
     #Ensures it works in virtualEnv by setting paths
-    QtCore.QCoreApplication.setLibraryPaths(['env34\Lib\site-packages\PyQt5\plugins'])
-    #E:\Visual Studio 2015\Projects\GroceryCompare\GroceryCompare\
+    QtCore.QCoreApplication.setLibraryPaths(['venv\Lib\site-packages\PyQt5\QT\plugins'])
 
     #Create the main window
     app = QtWidgets.QApplication(sys.argv)
